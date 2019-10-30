@@ -1,0 +1,31 @@
+{
+  "name": "@gavinning/http",
+  "version": "0.0.0",
+  "description": "fe http mod",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test/**/*.spec.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gavinning/http.git"
+  },
+  "keywords": [
+    "http",
+    "axios",
+    "request"
+  ],
+  "author": "gavinning",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gavinning/http/issues"
+  },
+  "homepage": "https://github.com/gavinning/http#readme",
+  "devDependencies": {
+    "axios": "^0.19.0",
+    "mocha": "^6.2.2"
+  },
+  "dependencies": {
+    "shortid": "^2.2.15"
+  }
+}
