@@ -42,10 +42,10 @@ class Http {
             return axios(options)
         }
         try {
-            return this.ops.resolver(null, await axios(options))
+            return this.ops.resolver(null, await axios(options), options)
         }
         catch(err) {
-            return this.ops.resolver(err)
+            return this.ops.resolver(err, null, options)
         }
     }
 
