@@ -1,6 +1,6 @@
 {
   "name": "@gavinning/http",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "fe http mod",
   "main": "src/http.js",
   "scripts": {

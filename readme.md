@@ -19,7 +19,10 @@ const http = new Http({
     // 中间处理层
     // 可将所有公共处理、异常处理放在这里处理
     // 例如普通请求上报，异常上报，异常提醒等等
-    async resolver(err, response) {
+    // @err 错误，没有则为null
+    // @options 请求参数
+    // @http 当前http实例
+    async resolver(err, response, options, http) {
         if (err) {
             return console.log('系统异常[id]:' + err.message)
         }
@@ -43,6 +46,13 @@ http.fetch(options)
 // 如果设置api参数配置，可使用api方法进行快捷请求
 // 假设某api配置name为user 则可以类似这样进行请求 不支持options
 http.api('user', data)
+```
+``auto``方法会改写``http.$auto``的值，可配合``resolver``参数进行使用
+```js
+// http.$auto default value is true
+http.auto() // => http.$auto = false
+http.auto(true) // => http.$auto = true
+http.auto(false) // => http.$auto = false
 ```
 
 

@@ -91,7 +91,7 @@ describe('Class Http function test', () => {
 
     it('fetch test', async () => {
         const data = await http.fetch({
-            url: '/api/user', 
+            url: '/api/user',
             data: { foo: 'bar2' },
             method: 'POST'
         })
@@ -99,5 +99,15 @@ describe('Class Http function test', () => {
         assert.equal(data.message, 'ok')
         assert.equal(data.data.name, 'gavinning')
         assert.equal(data.data.foo, 'bar2')
+    })
+
+    it('auto test', async () => {
+        assert.equal(http.$auto, true)
+        http.auto()
+        assert.equal(http.$auto, false)
+        http.auto(true)
+        assert.equal(http.$auto, true)
+        http.auto(false)
+        assert.equal(http.$auto, false)
     })
 })

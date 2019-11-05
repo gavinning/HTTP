@@ -4,6 +4,8 @@ const lib = require('./lib')
 class Http {
     constructor(ops = { baseURL, api, timeout, token, resolver }) {
         this.ops = ops
+        this.ops.resolver = ops.resolver || (() => {})
+        this.$auto = true
     }
 
     api(name, data) {
@@ -14,6 +16,11 @@ class Http {
             throw new Error(`没有找到${name}的api配置`)
         }
         return this.fetch(this.ops.api[name](data))
+    }
+
+    auto(arg) {
+        this.$auto = arg ? true : false
+        return this
     }
 
     get(url, options = {}) {
@@ -42,10 +49,10 @@ class Http {
             return axios(options)
         }
         try {
-            return this.ops.resolver(null, await axios(options), options)
+            return this.ops.resolver(null, await axios(options), options, this)
         }
         catch(err) {
-            return this.ops.resolver(err, null, options)
+            return this.ops.resolver(err, null, options, this)
         }
     }
 
