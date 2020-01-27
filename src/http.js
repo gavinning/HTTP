@@ -49,6 +49,11 @@ class Http {
             return axios(options)
         }
         try {
+            // @resolver
+            // @param {Object} err 错误实例
+            // @param {Object} response axios响应
+            // @param {Object} options axios请求参数
+            // @param {Object} http Http实例
             return this.ops.resolver(null, await axios(options), options, this)
         }
         catch(err) {

@@ -5,7 +5,7 @@ const assert = require('assert')
 describe('Class Http function test', () => {
 
     before(() => {
-        app.listen(10086)
+        app.listen(10088)
     })
 
     after(() => {
@@ -26,7 +26,7 @@ describe('Class Http function test', () => {
     const http = new Http({
         api,
         token: '123',
-        baseURL: 'http://localhost:10086',
+        baseURL: 'http://localhost:10088',
         async resolver(err, response) {
             if (err) {
                 return console.log('系统异常[id]:' + err.message)
@@ -41,13 +41,13 @@ describe('Class Http function test', () => {
     it('$urlPath test 1', () => {
         let url = '/api/check'
         let ret = http.$urlPatch(url)
-        assert.equal(ret, 'http://localhost:10086/api/check')
+        assert.equal(ret, 'http://localhost:10088/api/check')
     })
 
     it('$urlPath test 2', () => {
         let ops = { url: '/api/check' }
         let ret = http.$urlPatch(ops)
-        assert.equal(ret.url, 'http://localhost:10086/api/check')
+        assert.equal(ret.url, 'http://localhost:10088/api/check')
     })
 
     it('$authPatch test 1', () => {
