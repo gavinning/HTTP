@@ -1,58 +1,77 @@
-Http
+HTTP
 ---
-通用API请求封装
+HTTP工具包，更高效的接口调用方式
 
-### Install
-依赖``axios``，请自行安装
+### 安装
 ```sh
-npm i axios @gavinning/http
+npm i @4a/http
 ```
 
-### Usage
+### 接口配置示例
+接口对象配置详请参照 [``axios.options``](https://github.com/axios/axios#request-config)
 ```js
-const Http = require('@gavinning/http')
+const api = {
 
-const http = new Http({
-    api, // 可选
-    token, // 可选
-    baseURL, // 可选
-    // 中间处理层
-    // 可将所有公共处理、异常处理放在这里处理
-    // 例如普通请求上报，异常上报，异常提醒等等
-    // @err 错误，没有则为null
-    // @options 请求参数
-    // @http 当前http实例
-    async resolver(err, response, options, http) {
+    user() {
+        return {
+            url: '/api/user',
+            method: 'GET'
+        }
+    },
+
+    post(data) {
+        return {
+            url: '/api/post',
+            data,
+            method: 'POST'
+        }
+    },
+}
+
+module.exports = api
+```
+
+### 使用示例
+```js
+const HTTP = require('@4a/http')
+
+/**
+ * @param {Object} api 接口配置，必须
+ * @param {String | Function} token 可选，推荐
+ * @param {String} baseURL 可选，推荐
+ * @param {Number} timeout 超时时间，可选，推荐
+ * @param {Function} resolver 请求处理中间件，可选，推荐
+ */
+const http = new HTTP({
+    api,
+    token,
+    baseURL,
+    timeout,
+    /**
+     * 中间处理层
+     * @param {Error} err 错误实例
+     * @param {Object} result axios响应结果
+     * @param {Object} options axios请求参数
+     * @param {HTTP} http
+     */
+    async resolver(err, result, options, http) {
         if (err) {
-            return console.log('系统异常[id]:' + err.message)
+            // 可在此处执行 错误处理，错误上报 等操作
+            console.error('请求异常:', err)
+            throw err
         }
-        if (response.data && response.data.code !== 0) {
-            return console.log('请求异常[id]:' + response.data.message)
+        if (result.data && result.data.code !== 0) {
+            // 可在此处执行 异常处理，异常上报 等操作
+            console.warn('请求异常:', result.data.message)
         }
-        return response.data
+        return result.data
     }
 })
 ```
-发起请求
+#### 发起请求
 ```js
-// 正常分类请求
-// options参见axios:options
-http.get(url, options)
-http.put(url, data, options)
-http.post(url, data, options)
-// 综合请求
-http.fetch(options)
-
-// 如果设置api参数配置，可使用api方法进行快捷请求
-// 假设某api配置name为user 则可以类似这样进行请求 不支持options
-http.api('user', data)
-```
-``auto``方法会改写``http.$auto``的值，可配合``resolver``参数进行使用
-```js
-// http.$auto default value is true
-http.auto() // => http.$auto = false
-http.auto(true) // => http.$auto = true
-http.auto(false) // => http.$auto = false
+http.user() // 实例方法是根据接口配置自动创建的
+http.post({ title: 'foo', content: 'bar' })
 ```
 
 

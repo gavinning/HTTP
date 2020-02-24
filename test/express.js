@@ -17,14 +17,14 @@ app.get('/api/user', (req, res) => {
     })
 })
 
-app.post('/api/user', (req, res) => {
+app.post('/api/post', (req, res) => {
     res.send({
         code: 0,
         message: 'ok',
         data: {
             id: 1,
-            name: 'gavinning',
-            foo: req.body.foo
+            title: req.body.title,
+            content: req.body.content
         }
     })
 })
