@@ -68,10 +68,21 @@ const http = new HTTP({
     }
 })
 ```
-#### 发起请求
+#### 请求发起示例
 ```js
-http.user() // 实例方法是根据接口配置自动创建的
+http.user() // 实例方法根据接口配置自动生成
 http.post({ title: 'foo', content: 'bar' })
+```
+
+### 依赖模块导出
+```js
+// axios导出
+HTTP.axios // 原生axios模块引用
+http.$axios // axios实例，baseURL、timeout、token配置在该实例有效
+
+// extend导出
+HTTP.extend // 原生extend模块引用
+http.$extend // 原生extend模块引用
 ```
 
 

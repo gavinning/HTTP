@@ -13,6 +13,7 @@ class HTTP {
                 headers: { ...this.$auth() }
             })
         })
+        Object.defineProperty(this, '$extend', { value: extend })
         for (let name in this.$ops.api) {
             Object.defineProperty(HTTP.prototype, name, {
                 value: (data, options) => {
@@ -45,5 +46,8 @@ class HTTP {
         }
     }
 }
+
+HTTP.axios = axios
+HTTP.extend = extend
 
 module.exports = HTTP
