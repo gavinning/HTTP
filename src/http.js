@@ -13,9 +13,9 @@ class HTTP {
                 headers: { ...this.$auth() }
             })
         })
-        Object.defineProperty(this, '$extend', { value: extend })
+        Object.defineProperty(HTTP.prototype, '$extend', { value: extend })
         for (let name in this.$ops.api) {
-            Object.defineProperty(HTTP.prototype, name, {
+            Object.defineProperty(this, name, {
                 value: (data, options) => {
                     return this.$fetch(this.$ops.api[name](data), options)
                 }
