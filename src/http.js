@@ -17,6 +17,7 @@ class HTTP {
         for (let name in this.$ops.api) {
             Object.defineProperty(this, name, {
                 value: (data, options) => {
+                    options = this.$appendToken(options)
                     return this.$fetch(this.$ops.api[name](data), options)
                 }
             })
@@ -31,6 +32,19 @@ class HTTP {
             return { Authorization: 'Bearer ' + this.$ops.token() }
         }
         return {}
+    }
+
+    $appendToken(options) {
+        if (!options) {
+            options = {}
+        }
+        if (!options.headers) {
+            options.headers = {}
+        }
+        if (!options.headers.Authorization) {
+            options.headers.Authorization = this.$auth().Authorization
+        }
+        return options
     }
 
     async $fetch(api, options) {
