@@ -34,7 +34,12 @@ describe('Class Http function test', () => {
         api,
         token: '123',
         baseURL: 'http://localhost:10088',
-        async resolver(err, response) {
+        before(options) {
+            options.params = options.params || {}
+            options.params.sign = 1
+            return options
+        },
+        async resolver(err, response, options) {
             if (err) {
                 console.log('系统异常[id]:' + err.message)
                 throw err

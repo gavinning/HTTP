@@ -40,15 +40,22 @@ const HTTP = require('@4a/http')
  * @param {String | Function} token 可选，推荐
  * @param {String} baseURL 可选，推荐
  * @param {Number} timeout 超时时间，可选，推荐
- * @param {Function} resolver 请求处理中间件，可选，推荐
+ * @param {Function} before 请求预处理函数，可选
+ * @param {Function} resolver 请求后处理函数，可选，推荐
  */
 const http = new HTTP({
     api,
     token,
     baseURL,
     timeout,
+    // 可用于添加签名等预处理操作
+    before(options) {
+        options.params = options.params || {}
+        options.params.sign = 1
+        return options
+    },
     /**
-     * 中间处理层
+     * 请求后处理
      * @param {Error} err 错误实例
      * @param {Object} result axios响应结果
      * @param {Object} options axios请求参数

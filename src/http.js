@@ -2,7 +2,8 @@ const axios = require('axios')
 const extend = require('extend')
 
 class HTTP {
-    constructor({ baseURL, api, token, timeout = 6000, resolver = () => {} }) {
+    constructor({ baseURL, api, token, timeout = 6000, before, resolver = () => {} }) {
+        before = before || function before(options) { return options }
         Object.defineProperty(this, '$ops', {
             value: { api, token, resolver }
         })
@@ -17,7 +18,8 @@ class HTTP {
         for (let name in this.$ops.api) {
             Object.defineProperty(this, name, {
                 value: (data, options) => {
-                    options = this.$appendToken(options)
+                    options = token ? this.$appendToken(options) :options
+                    options = before(options) || options
                     return this.$fetch(this.$ops.api[name](data), options)
                 }
             })
