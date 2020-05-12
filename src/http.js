@@ -5,7 +5,7 @@ class HTTP {
     constructor({ baseURL, api, token, timeout = 6000, before, resolver = () => {} }) {
         before = before || function before(options) { return options }
         Object.defineProperty(this, '$ops', {
-            value: { api, token, resolver }
+            value: { api, token, before, resolver }
         })
         Object.defineProperty(this, '$axios', {
             value: axios.create({
@@ -18,8 +18,7 @@ class HTTP {
         for (let name in this.$ops.api) {
             Object.defineProperty(this, name, {
                 value: (data, options) => {
-                    options = token ? this.$appendToken(options) :options
-                    options = before(options) || options
+                    options = this.$appendToken(options)
                     return this.$fetch(this.$ops.api[name](data), options)
                 }
             })
@@ -51,6 +50,7 @@ class HTTP {
 
     async $fetch(api, options) {
         options = extend(true, api, options)
+        options = this.$ops.before(options) || options
         if (!this.$ops.resolver) {
             return this.$axios(options)
         }
