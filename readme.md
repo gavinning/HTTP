@@ -2,12 +2,12 @@ HTTP
 ---
 HTTP工具包，更高效的接口调用方式
 
-### 安装
+### Install
 ```sh
 npm i @4a/http
 ```
 
-### 接口配置示例
+### Usage
 接口对象配置详请参照 [``axios.options``](https://github.com/axios/axios#request-config)
 ```js
 const api = {
@@ -30,8 +30,6 @@ const api = {
 
 module.exports = api
 ```
-
-### 使用示例
 ```js
 const HTTP = require('@4a/http')
 
@@ -57,24 +55,70 @@ const http = new HTTP({
     /**
      * 请求后处理
      * @param {Error} err 错误实例
-     * @param {Object} result axios响应结果
+     * @param {Object} response axios响应结果
      * @param {Object} options axios请求参数
      * @param {HTTP} http
      */
-    async resolver(err, result, options, http) {
+    async resolver(err, response, options, http) {
         if (err) {
             // 可在此处执行 错误处理，错误上报 等操作
             console.error('请求异常:', err)
             throw err
         }
-        if (result.data && result.data.code !== 0) {
+        if (response.data && response.data.code !== 0) {
             // 可在此处执行 异常处理，异常上报 等操作
-            console.warn('请求异常:', result.data.message)
+            console.warn('请求异常:', response.data.message)
         }
-        return result.data
+        return response.data
     }
 })
 ```
+
+### Example
+高级操作：token失效，自动刷新，自动重试上次请求
+```js
+const http = new HTTP({
+    api,
+    token,
+    baseURL,
+    timeout,
+    async resolver(err, response, options, http) {
+        
+        // 错误上报
+        if (err) {
+            action.error(err, {
+                action: '请求异常',
+                context: options
+            })
+            throw err
+        }
+
+        // 校验token异常
+        if ( isTokenError(response.data.code) ) {
+            // 刷新token
+            await auth.refreshToken()
+            // 更新token
+            options.headers = http.$auth()
+            // 重试上次请求
+            return (await axios(options)).data
+        }
+
+        // 异常上报
+        if (response.data.code !== 0) {
+            action.error(null, {
+                action: '请求异常',
+                context: options,
+                key: 'code',
+                value: response.data.code,
+                message: response.data.message
+            })
+        }
+
+        return response.data
+    }
+})
+```
+
 #### 请求发起示例
 ```js
 http.user() // 实例方法根据接口配置自动生成
