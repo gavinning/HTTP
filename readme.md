@@ -85,11 +85,9 @@ http.post({ title: 'foo', content: 'bar' })
 ```js
 // axios导出
 HTTP.axios // 原生axios模块引用
-http.$axios // axios实例，baseURL、timeout、token配置在该实例有效
 
 // extend导出
 HTTP.extend // 原生extend模块引用
-http.$extend // 原生extend模块引用
 ```
 
 

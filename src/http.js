@@ -2,23 +2,26 @@ const axios = require('axios')
 const extend = require('extend')
 
 class HTTP {
-    constructor({ baseURL, api, token, timeout = 6000, before, resolver = () => {} }) {
+    constructor({ baseURL, api, token, timeout = 10000, before, resolver }) {
+
+        // 请求预处理
         before = before || function before(options) { return options }
+
+        // 请求后处理
+        resolver = resolver || function resolver(err, response) { return err ? console.error(err) : response.data }
+
         Object.defineProperty(this, '$ops', {
-            value: { api, token, before, resolver }
+            value: { baseURL, api, token, timeout, before, resolver }
         })
-        Object.defineProperty(this, '$axios', {
-            value: axios.create({
-                baseURL,
-                timeout,
-                headers: { ...this.$auth() }
-            })
-        })
-        Object.defineProperty(HTTP.prototype, '$extend', { value: extend })
+
+        // HTTP实例自动创建api所有方法
         for (let name in this.$ops.api) {
+
+            // 自动创建的api方法
+            // 第一个参数固定为数据参数，将会被透传给api对应的同名方法
+            // 第二个参数为axios的options对象，可选，允许为空
             Object.defineProperty(this, name, {
                 value: (data, options) => {
-                    options = this.$appendToken(options)
                     return this.$fetch(this.$ops.api[name](data), options)
                 }
             })
@@ -36,9 +39,6 @@ class HTTP {
     }
 
     $appendToken(options) {
-        if (!options) {
-            options = {}
-        }
         if (!options.headers) {
             options.headers = {}
         }
@@ -49,13 +49,24 @@ class HTTP {
     }
 
     async $fetch(api, options) {
-        options = extend(true, api, options)
+        
+        // 写入Token
+        api = this.$appendToken(api)
+
+        // 写入baseURL，api内配置优先级更高
+        api.baseURL = api.baseURL || this.$ops.baseURL
+
+        // 写入timeout，api内配置优先级更高
+        api.timeout = api.timeout || this.$ops.timeout
+
+        // 合并接口调用时传入的高优先级附加options
+        options = extend(true, api, options || {})
+
+        // 执行请求发送之前预处理函数
         options = this.$ops.before(options) || options
-        if (!this.$ops.resolver) {
-            return this.$axios(options)
-        }
+
         try {
-            return this.$ops.resolver(null, await this.$axios(options), options, this)
+            return this.$ops.resolver(null, await axios(options), options, this)
         }
         catch (err) {
             return this.$ops.resolver(err, null, options, this)
