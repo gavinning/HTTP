@@ -82,6 +82,8 @@ const http = new HTTP({
     token,
     baseURL,
     timeout,
+    // 如果下游使用Promise的方式处理异常
+    // 这里的resolver参数应该用async函数
     async resolver(err, response, options, http) {
         
         // 错误上报
